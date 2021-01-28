@@ -5,11 +5,15 @@ def arithmetic_arranger(problems, solve=False):
         return "Error: Too many problems."
 
     # Split problems into individual problems
+    line1 = line2 = line3 = line4 = ""
     for problem in problems:
-        [operand1, operator, operand2] = problem.split()
+        try:
+            [operand1, operator, operand2] = problem.split()
+        except ValueError:
+            return "Error: Malformed problem"
 
         # Check operators
-        if operator not in '+-':
+        if operator not in "+-":
             return "Error: Operator must be '+' or '-'."
 
         # Check that input is comprised of digits
@@ -20,6 +24,24 @@ def arithmetic_arranger(problems, solve=False):
         if len(operand1) > 4 or len(operand2) > 4:
             return "Error: Numbers cannot be more than four digits."
 
-    arranged_problems = ''
+        # Calculate the answer
+        if operator in "+":
+            answer = str(int(operand1) + int(operand2))
+        elif operator in "-":
+            answer = str(int(operand1) - int(operand2))
+        else:
+            return "Error: unknown operator (this is a bug)"
+
+        # Create the lines for the formatting
+        width = max(len(operand1), len(operand2))
+        line1 += "  " + " " * (width - len(operand1)) + operand1 + "    "
+        line2 += operator + " " + " " * (width - len(operand2)) + operand2 + "    "
+        line3 += "-" * (width + 2) + "    "
+        line4 += " " * ((width + 2) - len(answer)) + answer + "    "
+
+    arranged_problems = line1.rstrip() + "\n" + line2.rstrip() + "\n" + line3.rstrip()
+
+    if solve:
+        arranged_problems += '\n' + line4.rstrip()
 
     return arranged_problems
